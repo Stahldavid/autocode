@@ -1,0 +1,6 @@
+langchain
+openai
+pinecone-client[grpc]
+tiktoken
+wikipedia
+wolframalpha

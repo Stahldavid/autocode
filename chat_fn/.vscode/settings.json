@@ -1,0 +1,4 @@
+{
+    "terminal.integrated.shellIntegration.suggestEnabled": true,
+    "terminal.integrated.defaultProfile.windows": "Ubuntu-22.04 (WSL)"
+}

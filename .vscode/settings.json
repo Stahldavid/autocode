@@ -1,0 +1,14 @@
+{
+    "python.testing.pytestArgs": [
+        "chat_fn"
+    ],
+    "python.testing.unittestEnabled": true,
+    "python.testing.pytestEnabled": false,
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        "./chat_fn",
+        "-p",
+        "test_*.py"
+    ]
+}

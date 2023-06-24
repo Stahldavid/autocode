@@ -1,0 +1,56 @@
+from langchain import (
+    LLMMathChain,
+    OpenAI,
+    SerpAPIWrapper,
+    SQLDatabase,
+    SQLDatabaseChain,
+)
+from langchain.agents import initialize_agent, Tool
+from langchain.agents import AgentType
+from langchain.chat_models import ChatOpenAI
+from dotenv import load_dotenv
+import os
+
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Access the API key from the environment variable
+pinecone_api_key = os.getenv('PINECONE_API_KEY')
+openai_api_key = os.getenv('OPENAI_API_KEY')
+
+
+
+
+# Initialize the OpenAI language model
+#Replace <your_api_key> in openai_api_key="<your_api_key>" with your actual OpenAI key.
+llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-0613",openai_api_key=openai_api_key)
+
+# Initialize the SerpAPIWrapper for search functionality
+#Replace <your_api_key> in openai_api_key="<your_api_key>" with your actual SerpAPI key.
+search = SerpAPIWrapper(serpapi_api_key="d4eb38ff06e003ba07a08950ec770d7d3b876e5685ff9806d3a79a5dc339e558")
+
+# Initialize the LLMMathChain
+llm_math_chain = LLMMathChain.from_llm(llm=llm, verbose=True)
+
+# Initialize the SQL database using the Chinook database file
+# Replace the file location to the custom Data Base
+# db = SQLDatabase.from_uri("sqlite:///../../../../../notebooks/Chinook.db")
+
+# # Initialize the SQLDatabaseChain with the OpenAI language model and SQL database
+# db_chain = SQLDatabaseChain.from_llm(llm, db, verbose=True)
+
+# Define a list of tools offered by the agent
+tools = [
+    Tool(
+        name="Search",
+        func=search.run,
+        description="Useful when you need to answer questions about current events. You should ask targeted questions."
+    )
+]
+
+mrkl = initialize_agent(tools, llm, agent=AgentType.OPENAI_FUNCTIONS, verbose=True)
+
+mrkl.run(
+    "what are the best libraries for ros2 for variable impedance control?"
+)
