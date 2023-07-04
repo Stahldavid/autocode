@@ -24,7 +24,7 @@ openai_api_key = os.getenv('OPENAI_API_KEY')
 # You can also see the separators used for a given language
 RecursiveCharacterTextSplitter.get_separators_for_language(Language.PYTHON)
 
-root_dir = '/home/stahlubuntu/chat_docs/chat_fn/chat/camel/ros2_controllers'
+root_dir = '/home/stahlubuntu/chat_docs/chat_fn/chat/camel/ros2_control'
 
 docs = []
 for dirpath, dirnames, filenames in os.walk(root_dir):

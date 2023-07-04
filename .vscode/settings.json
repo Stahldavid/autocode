@@ -10,5 +10,6 @@
         "./chat_fn",
         "-p",
         "test_*.py"
-    ]
+    ],
+    "cody.autocomplete.advanced.cache": false
 }

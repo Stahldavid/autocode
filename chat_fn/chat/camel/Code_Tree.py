@@ -68,128 +68,128 @@ generation_chain = LLMChain(llm=generation_llm, prompt=ChatPromptTemplate.from_m
 ranking_chain = LLMChain(llm=ranking_llm, prompt=ChatPromptTemplate.from_messages([ranking_system_template, ranking_human_template]))
 generation_loop_chain = LLMChain(llm=generation_llm, prompt=ChatPromptTemplate.from_messages([generation_loop_system_template, generation_loop_human_template]))
 
-# Define the task
 task = "Write a variable impedance control for force feedback using ros2, webots, webots_ros2 and ros2_control."
-j = 1
 
-# Decompose the task into a markdown list
-markdown_list = decomposition_chain.run(task)
+print(decomposition_chain.run(task))
+# task = "Write a variable impedance control for force feedback using ros2, webots, webots_ros2 and ros2_control."
+# j = 1
 
-# Define the regular expression pattern to match the list items 
-pattern = r'(\d+)\.\s+(.*)'
+# # Decompose the task into a markdown list
+# markdown_list = decomposition_chain.run(task)
 
-# Compile the regex pattern once
-regex = re.compile(pattern)  
+# # Define the regular expression pattern to match the list items 
+# pattern = r'(\d+)\.\s+(.*)'
 
-# Use a default dict to avoid KeyError
-from collections import defaultdict
-steps = defaultdict(str)  
+# # Compile the regex pattern once
+# regex = re.compile(pattern)  
 
-# Find all matches of the pattern in the markdown list
-matches = regex.findall(markdown_list)  
+# # Use a default dict to avoid KeyError
+# from collections import defaultdict
+# steps = defaultdict(str)  
 
-# Convert the matches into a dictionary
-for match in matches: 
-    steps[int(match[0])] = match[1] 
+# # Find all matches of the pattern in the markdown list
+# matches = regex.findall(markdown_list)  
 
-# Define an empty dictionary to store the generated output for each step
-generated = {}
+# # Convert the matches into a dictionary
+# for match in matches: 
+#     steps[int(match[0])] = match[1] 
 
-# Generate the output for step 1 four times using the LLMChain
-for i in range(1, 5):
-    output = generation_chain.run(steps[j])
-    generated[i] = output
+# # Define an empty dictionary to store the generated output for each step
+# generated = {}
 
-# Convert dictionary to string with separator and indicators
-generated_string = ""
-for i, code in generated.items():
-    generated_string += f"\n\n{'='*50}\nCode {i}:\n{code}"
+# # Generate the output for step 1 four times using the LLMChain
+# for i in range(1, 5):
+#     output = generation_chain.run(steps[j])
+#     generated[i] = output
 
-# Pass the generated code sequences to the ranking_chain
-ranking = ranking_chain.run(generated_string)
+# # Convert dictionary to string with separator and indicators
+# generated_string = ""
+# for i, code in generated.items():
+#     generated_string += f"\n\n{'='*50}\nCode {i}:\n{code}"
 
-# Extract code indicators and scores from ranking string
-pattern = r"Code (\d+):\s*(\d+\.?\d*)"
-matches = re.findall(pattern, ranking)
+# # Pass the generated code sequences to the ranking_chain
+# ranking = ranking_chain.run(generated_string)
 
-# Store code indicators and scores in dictionary of lists
-ranked = {float(match[1]): int(match[0]) for match in matches}
+# # Extract code indicators and scores from ranking string
+# pattern = r"Code (\d+):\s*(\d+\.?\d*)"
+# matches = re.findall(pattern, ranking)
 
-# Get the highest score 
-highest_score = max(ranked.keys())
+# # Store code indicators and scores in dictionary of lists
+# ranked = {float(match[1]): int(match[0]) for match in matches}
 
-# Get the code(s) for the highest score
-highest_codes = ranked[highest_score]
+# # Get the highest score 
+# highest_score = max(ranked.keys())
 
-prev_code = ""
-prev_instruction = ""
-actual_instruction = ""
+# # Get the code(s) for the highest score
+# highest_codes = ranked[highest_score]
 
-j=1
-# Extract code indicators and scores from ranking string
-pattern = r"Code (\d+):\s*(\d+\.?\d*)"
-matches = re.findall(pattern, ranking)
+# prev_code = ""
+# prev_instruction = ""
+# actual_instruction = ""
 
-# Store code indicators and scores in dictionary of lists
-ranked = {float(match[1]): int(match[0]) for match in matches}
+# j=1
+# # Extract code indicators and scores from ranking string
+# pattern = r"Code (\d+):\s*(\d+\.?\d*)"
+# matches = re.findall(pattern, ranking)
 
-# Get the highest score 
-highest_score = max(matches, key=lambda x: float(x[1]))
+# # Store code indicators and scores in dictionary of lists
+# ranked = {float(match[1]): int(match[0]) for match in matches}
 
-# Get the code(s) for the highest score
-highest_code = generated[highest_score[0]]
+# # Get the highest score 
+# highest_score = max(matches, key=lambda x: float(x[1]))
 
-highest_code_str = generated[highest_score]
+# # Get the code(s) for the highest score
+# highest_code = generated[highest_score[0]]
 
-prev_code = prev_code + highest_code_str
-k = j
-j = j + 1
-prev_instruction = steps[k] + prev_instruction
-actual_instruction = steps[j]
+# highest_code_str = generated[highest_score]
 
-while j <= 8:
-    highest_code_str_memory = f"\n\n{'='*50}\nHighest Code:\n{highest_code_str}\n\n{'='*50}\nPrevious Code:\n{prev_code}\n\n{'='*50}\nPrevious Instruction:\n{prev_instruction}n\n{'='*50}\nActual Instruction:\n{actual_instruction}"
-    generated_new = generation_loop_chain.run(highest_code_str_memory)
-    # Define an empty dictionary to store the generated output for each step
-    generated_new = {}
+# prev_code = prev_code + highest_code_str
+# k = j
+# j = j + 1
+# prev_instruction = steps[k] + prev_instruction
+# actual_instruction = steps[j]
 
-    # Generate the output for step 1 four times using the LLMChain
-    for i in range(1, 5):
-        output = generation_loop_chain.run(highest_code_str_memory)
-        generated_new[i] = output
+# while j <= 8:
+#     highest_code_str_memory = f"\n\n{'='*50}\nHighest Code:\n{highest_code_str}\n\n{'='*50}\nPrevious Code:\n{prev_code}\n\n{'='*50}\nPrevious Instruction:\n{prev_instruction}n\n{'='*50}\nActual Instruction:\n{actual_instruction}"
+#     generated_new = generation_loop_chain.run(highest_code_str_memory)
+#     # Define an empty dictionary to store the generated output for each step
+#     generated_new = {}
 
-    # Convert dictionary to string with separator and indicators
-    generated_string = ""
-    for i, code in generated_new.items():
-        generated_string += f"\n\n{'='*50}\nCode {i}:\n{code}"
+#     # Generate the output for step 1 four times using the LLMChain
+#     for i in range(1, 5):
+#         output = generation_loop_chain.run(highest_code_str_memory)
+#         generated_new[i] = output
 
-    # Pass the generated code sequences to the ranking_chain
-    ranking = ranking_chain.run(generated_string)
+#     # Convert dictionary to string with separator and indicators
+#     generated_string = ""
+#     for i, code in generated_new.items():
+#         generated_string += f"\n\n{'='*50}\nCode {i}:\n{code}"
 
-    # Store code indicators and scores in dictionary of lists
-    ranked = {float(match[1]): int(match[0]) for match in matches}
+#     # Pass the generated code sequences to the ranking_chain
+#     ranking = ranking_chain.run(generated_string)
 
-    # Get the highest score 
-    highest_score = max(ranked.keys())
+#     # Store code indicators and scores in dictionary of lists
+#     ranked = {float(match[1]): int(match[0]) for match in matches}
 
-    # Get the code(s) for the highest score
-    highest_score = ranked[highest_score]
+#     # Get the highest score 
+#     highest_score = max(ranked.keys())
 
-    # Select just the first code 
-    highest_score = highest_score[0]
+#     # Get the code(s) for the highest score
+#     highest_score = ranked[highest_score]
 
-    highest_code_str = generated_new[highest_score]
+#     # Select just the first code 
+#     highest_score = highest_score[0]
 
-    prev_code = prev_code + highest_code_str
-    k = j
-    j = j + 1
-    prev_instruction = steps[k] + prev_instruction
-    actual_instruction = steps[j]
+#     highest_code_str = generated_new[highest_score]
 
-    highest_code_str_memory = f"\n\n{'='*50}\nHighest Code:\n{highest_code_str}\n\n{'='*50}\nPrevious Code:\n{prev_code}\n\n{'='*50}\nPrevious Instruction:\n{prev_instruction}n\n{'='*50}\nActual Instruction:\n{actual_instruction}"
-    print("##########################################################")
-    print(highest_code_str_memory)
+#     prev_code = prev_code + highest_code_str
+#     k = j
+#     j = j + 1
+#     prev_instruction = steps[k] + prev_instruction
+#     actual_instruction = steps[j]
 
-
+#     highest_code_str_memory = f"\n\n{'='*50}\nHighest Code:\n{highest_code_str}\n\n{'='*50}\nPrevious Code:\n{prev_code}\n\n{'='*50}\nPrevious Instruction:\n{prev_instruction}n\n{'='*50}\nActual Instruction:\n{actual_instruction}"
+#     print("##########################################################")
+#     print(highest_code_str_memory)
 
 
